@@ -1,0 +1,11 @@
+{
+  "name": "辅成·历史学霸",
+  "short_name": "历史学霸",
+  "description": "华小六年级历史互动问答",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#101e67",
+  "theme_color": "#101e67",
+  "lang": "zh-CN",
+  "icons": [{"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}
