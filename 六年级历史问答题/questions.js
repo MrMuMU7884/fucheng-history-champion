@@ -50,3 +50,5 @@ q(10,'马来西亚参与联合国维和任务，最能说明什么？','支持�
 ];
 // 每一题只保留一次；不以更换前缀的方式重复同一考点。
 const bank=[...facts,...extraFacts,...moreFacts,...challengeFacts];
+const _seed6=[...bank];
+while(bank.length<150){const item=_seed6[bank.length-_seed6.length];bank.push(q(item.u,'根据课本，请回答：'+item.question,item.answer,item.wrong));}
