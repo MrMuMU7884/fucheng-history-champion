@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="branding.css" />
   <link rel="stylesheet" href="../compact-branding.css" />
+  <link rel="stylesheet" href="../quiz-buttons.css" />
 </head>
 <body>
   <main class="game-shell">
@@ -30,7 +31,7 @@
     <section id="result" class="result" aria-live="polite"></section>
     <footer>
       <span id="score">得分：0 / 0</span>
-      <button id="actionButton" class="action-button" type="button" disabled>确认答案</button>
+      <div class="quiz-actions"><button id="actionButton" class="action-button" type="button" disabled>确认答案</button><button id="nextButton" class="action-button" type="button" hidden>下一题</button></div>
     </footer>
   </main>
   <script src="questions.js"></script><script src="../app.js"></script>
