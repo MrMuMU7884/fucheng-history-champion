@@ -1,11 +1,17 @@
 {
-  "name": "辅成·历史学霸",
+  "name": "辅成·历史学霸（四年级）",
   "short_name": "历史学霸",
-  "description": "华小六年级历史互动问答",
+  "description": "辅成教育中心华小四年级历史互动问答挑战",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
   "background_color": "#101e67",
   "theme_color": "#101e67",
   "lang": "zh-CN",
-  "icons": [{"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+  "icons": [
+    {"src":"icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},
+    {"src":"icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"},
+    {"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
+  ]
 }

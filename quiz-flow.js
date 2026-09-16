@@ -17,3 +17,11 @@ $('registrationForm').addEventListener('submit',event=>{event.preventDefault();c
 if($('gradeStart'))$('gradeStart').onclick=()=>{$('landing').hidden=true;$('registration').hidden=false;};
 $('actionButton').onclick=confirmAnswer;
 document.addEventListener('keydown',event=>{if(event.code==='Space'&&!['INPUT','BUTTON'].includes(document.activeElement.tagName)){event.preventDefault();if(!$('quiz').hidden&&!$('actionButton').disabled)$('actionButton').click();}});
+let installPrompt;
+const installButton=$('installApp'),installHint=$('installHint');
+const isIos=/iPad|iPhone|iPod/.test(navigator.userAgent)&&!window.MSStream;
+const isStandalone=window.matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+if(!isStandalone&&isIos&&installHint){installHint.hidden=false;installHint.textContent='iPhone/iPad：点浏览器底部的「分享」按钮，再选择「加入主画面」，即可像 App 一样使用。';}
+window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();installPrompt=event;if(installButton)installButton.hidden=false;});
+installButton?.addEventListener('click',async()=>{if(!installPrompt)return;installPrompt.prompt();const choice=await installPrompt.userChoice;if(choice.outcome==='accepted')installButton.hidden=true;installPrompt=null;});
+window.addEventListener('appinstalled',()=>{if(installButton)installButton.hidden=true;if(installHint){installHint.hidden=false;installHint.textContent='安装完成：可从手机桌面直接打开，也支持离线答题。';}});
