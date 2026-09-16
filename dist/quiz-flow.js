@@ -1,6 +1,6 @@
 const QUESTION_COUNT=30;
 const REBATE_PER_CORRECT=1;
-const GOOGLE_SHEET_WEB_APP_URL='https://script.google.com/macros/s/AKfycbzorWqPrcenS-8xF0euhgLTv-LJCoEfxvpwTpLbuRR-SmIr__OQotU0HRMgi7uybD92Fg/exec';
+const GOOGLE_SHEET_WEB_APP_URL='https://script.google.com/macros/s/AKfycbyYx5Bb1Y5JAem0oi0vgMtx_Dh1l113u_GaDlfzK-t0eJn6GXO47FJKf1PZfixKNpYrBw/exec';
 let questions=[],index=0,selected=null,revealed=false,correct=0,student={};
 const $=id=>document.getElementById(id),letters=['A','B','C','D'];
 const shuffled=list=>[...list].sort(()=>Math.random()-.5);
@@ -9,7 +9,9 @@ function choose(button){if(revealed)return;document.querySelectorAll('.answer').
 function confirmAnswer(){if(revealed){next();return;}if(!selected)return;revealed=true;const item=questions[index],win=selected===item.answer;if(win)correct++;document.querySelectorAll('.answer').forEach(button=>{button.disabled=true;if(button.dataset.answer===item.answer)button.classList.add('correct');if(button.dataset.answer===selected&&!win)button.classList.add('wrong');});$('result').textContent=win?'恭喜🎉，您答对了':'别灰心，下一题继续加油！';$('result').className=`result ${win?'good':'bad'}`;$('score').textContent=`得分：${correct} / ${index+1}`;$('actionButton').disabled=false;$('actionButton').textContent=index===QUESTION_COUNT-1?'查看成绩':'下一题';}
 function next(){if(index<QUESTION_COUNT-1){index++;render();return;}finish();}
 function finish(){const rebate=correct*REBATE_PER_CORRECT;$('result').textContent=`恭喜您，答对了 ${correct} 题，请联系 011-36642900 领取 RM${rebate} 的学费回扣。礼券有效于非本院生。`;$('result').className='result good';$('actionButton').textContent='再挑战一次';$('actionButton').onclick=()=>location.reload();submitResult(rebate);}
-function submitResult(rebate){const record={submittedAt:new Date().toISOString(),grade:window.QUIZ_GRADE,name:student.name,school:student.school,phone:student.phone,score:correct,totalQuestions:QUESTION_COUNT,rebate};if(GOOGLE_SHEET_WEB_APP_URL)fetch(GOOGLE_SHEET_WEB_APP_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(record)}).catch(()=>{});}
-$('registrationForm').addEventListener('submit',event=>{event.preventDefault();const form=new FormData(event.currentTarget);student={name:form.get('studentName').trim(),school:form.get('school').trim(),phone:form.get('phone').trim()};questions=shuffled(bank).slice(0,QUESTION_COUNT);$('registration').hidden=true;$('quiz').hidden=false;render();});
+function submitResult(rebate){const record={submittedAt:new Date().toISOString(),grade:window.QUIZ_GRADE,name:student.name,school:student.school,phone:student.phone,referrer:student.referrer||'',score:correct,totalQuestions:QUESTION_COUNT,rebate};if(GOOGLE_SHEET_WEB_APP_URL)fetch(GOOGLE_SHEET_WEB_APP_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(record)}).catch(()=>{});}
+const registrationConfig=window.QUIZ_REGISTRATION||{name:'studentName',phone:'phone'};
+$('registrationForm').addEventListener('submit',event=>{event.preventDefault();const form=new FormData(event.currentTarget);student={name:form.get(registrationConfig.name).trim(),school:form.get('school').trim(),phone:form.get(registrationConfig.phone).trim(),referrer:registrationConfig.referrer?form.get(registrationConfig.referrer).trim():''};questions=shuffled(bank).slice(0,QUESTION_COUNT);$('registration').hidden=true;$('quiz').hidden=false;render();});
+if($('gradeStart'))$('gradeStart').onclick=()=>{$('landing').hidden=true;$('registration').hidden=false;};
 $('actionButton').onclick=confirmAnswer;
 document.addEventListener('keydown',event=>{if(event.code==='Space'&&!['INPUT','BUTTON'].includes(document.activeElement.tagName)){event.preventDefault();if(!$('quiz').hidden&&!$('actionButton').disabled)$('actionButton').click();}});
