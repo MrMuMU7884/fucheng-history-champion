@@ -13,3 +13,9 @@ q(8,'爱国精神最直接表现为怎样对待国家象征？','尊重与珍惜
 const _seed5=[...bank];
 const _forms5=['根据课本，','请选出正确答案：','下列说法中，正确的是：'];
 while(bank.length<150){const n=bank.length-40, item=_seed5[n%_seed5.length], form=_forms5[Math.floor(n/_seed5.length)];bank.push(q(item.u,form+item.question,item.answer,item.wrong));}
+// 升级为辨析题：干扰项改为同一单元的相关概念，避免一眼排除。
+const _stems5=['【资料推论】请依据课本的关键词与史实判断：','【概念辨析】请分辨相关概念后回答：','【情境应用】课堂讨论出现以下问题，请综合课本知识作答：','【比较判断】不要只凭字面印象；请辨析后回答：'];
+const _answers5=new Map(unitMeta.map((_,u)=>[u+1,[...new Set(bank.filter(item=>item.u===u+1).map(item=>item.answer))]]));
+const _kind5=(answer,question)=>/哪一天|哪一年|年份/.test(question)?'日期':/多少|第几项|第几|几个/.test(question)?'数量':/哪里|哪个州|地点|地区/.test(question)?'地点':/^(东姑|敦|拿督|多尔|伦达)/.test(answer)?'人物':'单元概念';
+const _all5=[...bank];
+bank.splice(0,bank.length,...bank.map((item,index)=>{const kind=_kind5(item.answer,item.question);const related=[...new Set((kind==='单元概念'?_answers5.get(item.u):_all5.filter(entry=>_kind5(entry.answer,entry.question)===kind).map(entry=>entry.answer)).filter(answer=>answer!==item.answer))];const choices=[...related,...item.wrong,..._answers5.get(item.u)].filter(answer=>answer!==item.answer);const wrong=[];for(const answer of choices){if(!wrong.includes(answer))wrong.push(answer);if(wrong.length===3)break;}return {...item,question:_stems5[index%_stems5.length]+item.question.replace(/^(根据课本，|请选出正确答案：|下列说法中，正确的是：)/,''),wrong};}));

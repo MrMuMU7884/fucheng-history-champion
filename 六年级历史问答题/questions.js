@@ -52,3 +52,9 @@ q(10,'马来西亚参与联合国维和任务，最能说明什么？','支持�
 const bank=[...facts,...extraFacts,...moreFacts,...challengeFacts];
 const _seed6=[...bank];
 while(bank.length<150){const item=_seed6[bank.length-_seed6.length];bank.push(q(item.u,'根据课本，请回答：'+item.question,item.answer,item.wrong));}
+// 升级为辨析题：干扰项改为同一单元的相关概念，避免一眼排除。
+const _stems6=['【资料推论】请依据课本的关键词与史实判断：','【概念辨析】请分辨相关概念后回答：','【情境应用】课堂讨论出现以下问题，请综合课本知识作答：','【比较判断】不要只凭字面印象；请辨析后回答：'];
+const _answers6=new Map(unitMeta.map((_,u)=>[u+1,[...new Set(bank.filter(item=>item.u===u+1).map(item=>item.answer))]]));
+const _kind6=(answer,question)=>/哪一天|哪一年|年份/.test(question)?'日期':/多少|第几项|第几|几个/.test(question)?'数量':/哪里|哪个州|地点|地区|设在哪/.test(question)?'地点':/^(东姑|敦|李|妮科尔|阿兹祖|葛波)/.test(answer)?'人物':'单元概念';
+const _all6=[...bank];
+bank.splice(0,bank.length,...bank.map((item,index)=>{const kind=_kind6(item.answer,item.question);const related=[...new Set((kind==='单元概念'?_answers6.get(item.u):_all6.filter(entry=>_kind6(entry.answer,entry.question)===kind).map(entry=>entry.answer)).filter(answer=>answer!==item.answer))];const choices=[...related,...item.wrong,..._answers6.get(item.u)].filter(answer=>answer!==item.answer);const wrong=[];for(const answer of choices){if(!wrong.includes(answer))wrong.push(answer);if(wrong.length===3)break;}return {...item,question:_stems6[index%_stems6.length]+item.question.replace(/^(根据课本，|请选出正确答案：|下列说法中，正确的是：|根据课本，请回答：)/,''),wrong};}));
