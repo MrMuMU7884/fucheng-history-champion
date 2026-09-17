@@ -59,3 +59,7 @@ const _all6=[...bank];
 bank.splice(0,bank.length,...bank.map((item,index)=>{const kind=_kind6(item.answer,item.question);const related=[...new Set((kind==='单元概念'?_answers6.get(item.u):_all6.filter(entry=>_kind6(entry.answer,entry.question)===kind).map(entry=>entry.answer)).filter(answer=>answer!==item.answer))];const choices=[...related,...item.wrong,..._answers6.get(item.u)].filter(answer=>answer!==item.answer);const wrong=[];for(const answer of choices){if(!wrong.includes(answer))wrong.push(answer);if(wrong.length===3)break;}return {...item,question:_stem6(item,index)+item.question.replace(/^(根据课本，|请选出正确答案：|下列说法中，正确的是：|根据课本，请回答：)/,''),wrong};}));
 const _seen6=new Set();
 bank.splice(0,bank.length,...bank.filter(item=>{const key=`${item.u}|${item.question.replace(/^【[^】]+】[^：]*：/,'')}|${item.answer}`;if(_seen6.has(key))return false;_seen6.add(key);return true;}));
+// 补足的十题为资料配对 KBAT，要求学生关联课本结论与对应问题。
+const _base6=[...bank],_clean6=item=>item.question.replace(/^【[^】]+】[^：]*：/,'');
+const _kbat6=_base6.slice(0,10).map(item=>{const peers=_base6.filter(other=>other.u===item.u&&other!==item);return q(item.u,`【资料配对】资料卡记录的结论是「${item.answer}」。哪一个学习问题能准确对应这项结论？`,_clean6(item),[_clean6(peers[0]),_clean6(peers[1]),_clean6(peers[2])]);});
+bank.push(..._kbat6);
