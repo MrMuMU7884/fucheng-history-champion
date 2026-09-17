@@ -10,9 +10,6 @@ q(6,'史前时代指什么时期？','没有文字记录的时代',['有互联�
 q(7,'早期马来王国最初从什么发展而来？','小型居民点',['大型机场','现代城市','学校园地']),q(7,'古吉打王国位于哪里？','吉打布央谷',['砂拉越河','中爪哇','东爪哇']),q(7,'山都望王国位于哪里？','砂拉越河',['穆西河谷','吉兰丹','霹雳']),q(7,'早期马来王国与哪两个强国建立外交关系？','中国和印度',['日本和韩国','泰国和越南','英国和法国']),q(7,'早期马来王国建立外交关系可保障什么？','国家安全',['个人财富','天气稳定','游戏胜利']),
 q(8,'敦霹雳在马六甲王朝担任什么职位？','宰相',['海军统帅','商人','农夫']),q(8,'敦霹雳曾协助哪位苏丹扩张马六甲版图？','苏丹满速沙',['苏丹阿拉乌丁','苏丹马末沙','苏丹依斯干达']),q(8,'汉都亚在马六甲王朝担任什么职位？','海军统帅',['宰相','国王','州长']),q(8,'汉都亚负责保护什么？','马六甲海域安全',['学校财物','森林公园','农业机械']),q(8,'汉都亚的个人素质包括什么？','忠诚与勇敢',['自私与懒惰','偏见与浪费','欺骗与破坏'])
 ];
-const _seed4=[...bank];
-const _forms4=['根据课本，','请选出正确答案：','下列说法中，正确的是：'];
-while(bank.length<150){const n=bank.length-40, item=_seed4[n%_seed4.length], form=_forms4[Math.floor(n/_seed4.length)];bank.push(q(item.u,form+item.question,item.answer,item.wrong));}
 // 升级为辨析题：干扰项改为同一单元的相关概念，避免一眼排除。
 const _stems4=['【资料推论】请依据课本的关键词与史实判断：','【概念辨析】请分辨相关概念后回答：','【情境应用】课堂讨论出现以下问题，请综合课本知识作答：','【比较判断】不要只凭字面印象；请辨析后回答：'];
 const _answers4=new Map(unitMeta.map((_,u)=>[u+1,[...new Set(bank.filter(item=>item.u===u+1).map(item=>item.answer))]]));
@@ -20,3 +17,5 @@ const _kind4=(answer,question)=>/哪一天|哪一年|年份/.test(question)?'日
 const _stem4=(item,index)=>({日期:['【时间线辨析】请先排除其他历史节点，再作出判断：','【时间比较】请辨别相近时间后回答：'],数量:['【数据辨析】请区分数量、年份与次序后回答：','【资料核对】请比对课本数据后回答：'],地点:['【地理定位】请先辨别州属、地点与相关遗址，再作答：','【地点比较】请排除相近地名后回答：'],人物:['【人物辨析】请依据人物的职位或贡献交叉核对：','【角色比较】请区分人物与其职责后回答：'],单元概念:['【概念推理】请区分定义、作用与实例后回答：','【证据判断】请以课本依据排除不完全正确的概念：']}[_kind4(item.answer,item.question)][index%2]);
 const _all4=[...bank];
 bank.splice(0,bank.length,...bank.map((item,index)=>{const kind=_kind4(item.answer,item.question);const related=[...new Set((kind==='单元概念'?_answers4.get(item.u):_all4.filter(entry=>_kind4(entry.answer,entry.question)===kind).map(entry=>entry.answer)).filter(answer=>answer!==item.answer))];const choices=[...related,...item.wrong,..._answers4.get(item.u)].filter(answer=>answer!==item.answer);const wrong=[];for(const answer of choices){if(!wrong.includes(answer))wrong.push(answer);if(wrong.length===3)break;}return {...item,question:_stem4(item,index)+item.question.replace(/^(根据课本，|请选出正确答案：|下列说法中，正确的是：)/,''),wrong};}));
+const _seen4=new Set();
+bank.splice(0,bank.length,...bank.filter(item=>{const key=`${item.u}|${item.question.replace(/^【[^】]+】[^：]*：/,'')}|${item.answer}`;if(_seen4.has(key))return false;_seen4.add(key);return true;}));

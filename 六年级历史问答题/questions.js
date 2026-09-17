@@ -50,8 +50,6 @@ q(10,'马来西亚参与联合国维和任务，最能说明什么？','支持�
 ];
 // 每一题只保留一次；不以更换前缀的方式重复同一考点。
 const bank=[...facts,...extraFacts,...moreFacts,...challengeFacts];
-const _seed6=[...bank];
-while(bank.length<150){const item=_seed6[bank.length-_seed6.length];bank.push(q(item.u,'根据课本，请回答：'+item.question,item.answer,item.wrong));}
 // 升级为辨析题：干扰项改为同一单元的相关概念，避免一眼排除。
 const _stems6=['【资料推论】请依据课本的关键词与史实判断：','【概念辨析】请分辨相关概念后回答：','【情境应用】课堂讨论出现以下问题，请综合课本知识作答：','【比较判断】不要只凭字面印象；请辨析后回答：'];
 const _answers6=new Map(unitMeta.map((_,u)=>[u+1,[...new Set(bank.filter(item=>item.u===u+1).map(item=>item.answer))]]));
@@ -59,3 +57,5 @@ const _kind6=(answer,question)=>/哪一天|哪一年|年份/.test(question)?'日
 const _stem6=(item,index)=>({日期:['【时间线辨析】请先排除其他历史节点，再作出判断：','【时间比较】请辨别相近时间后回答：'],数量:['【数据辨析】请区分数量、年份与次序后回答：','【资料核对】请比对课本数据后回答：'],地点:['【地理定位】请先辨别州属、地点与相关遗址，再作答：','【地点比较】请排除相近地名后回答：'],人物:['【人物辨析】请依据人物的职位、贡献或称号交叉核对：','【角色比较】请区分人物与其职责后回答：'],单元概念:['【概念推理】请区分定义、作用与实例后回答：','【证据判断】请以课本依据排除不完全正确的概念：']}[_kind6(item.answer,item.question)][index%2]);
 const _all6=[...bank];
 bank.splice(0,bank.length,...bank.map((item,index)=>{const kind=_kind6(item.answer,item.question);const related=[...new Set((kind==='单元概念'?_answers6.get(item.u):_all6.filter(entry=>_kind6(entry.answer,entry.question)===kind).map(entry=>entry.answer)).filter(answer=>answer!==item.answer))];const choices=[...related,...item.wrong,..._answers6.get(item.u)].filter(answer=>answer!==item.answer);const wrong=[];for(const answer of choices){if(!wrong.includes(answer))wrong.push(answer);if(wrong.length===3)break;}return {...item,question:_stem6(item,index)+item.question.replace(/^(根据课本，|请选出正确答案：|下列说法中，正确的是：|根据课本，请回答：)/,''),wrong};}));
+const _seen6=new Set();
+bank.splice(0,bank.length,...bank.filter(item=>{const key=`${item.u}|${item.question.replace(/^【[^】]+】[^：]*：/,'')}|${item.answer}`;if(_seen6.has(key))return false;_seen6.add(key);return true;}));

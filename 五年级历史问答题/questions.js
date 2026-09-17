@@ -10,9 +10,6 @@ q(6,'争取独立最需要各族人民的什么？','团结合作',['彼此排�
 q(7,'联邦宪法的主要作用是什么？','保障国家制度',['规定游戏规则','记录天气','安排旅游']),q(7,'法律面前人人应怎样？','平等',['享有特权','不必遵守','可任意破坏']),q(7,'遵守法律能维护什么？','社会秩序',['社会冲突','环境破坏','族群偏见']),q(7,'国家制度需要人民怎样支持？','负责与守法',['自私与懒惰','浪费与破坏','偏见与排斥']),q(7,'民主制度让人民可通过什么参与国家事务？','选举',['游戏','旅游','购物']),
 q(8,'爱国精神最直接表现为怎样对待国家象征？','尊重与珍惜',['嘲笑与破坏','忽略与浪费','排斥与敌对']),q(8,'保护历史遗产的主要原因是什么？','传承国家记忆',['增加垃圾','破坏古迹','忘记历史']),q(8,'各族人民合作能够带来什么？','国家繁荣',['社会分裂','族群冲突','文化偏见']),q(8,'学生能怎样表达爱国？','遵守校规并努力学习',['破坏公物','欺骗同学','逃避责任']),q(8,'珍惜和平生活应从什么开始？','尊重他人与遵守规则',['制造冲突','散播谣言','排斥朋友'])
 ];
-const _seed5=[...bank];
-const _forms5=['根据课本，','请选出正确答案：','下列说法中，正确的是：'];
-while(bank.length<150){const n=bank.length-40, item=_seed5[n%_seed5.length], form=_forms5[Math.floor(n/_seed5.length)];bank.push(q(item.u,form+item.question,item.answer,item.wrong));}
 // 升级为辨析题：干扰项改为同一单元的相关概念，避免一眼排除。
 const _stems5=['【资料推论】请依据课本的关键词与史实判断：','【概念辨析】请分辨相关概念后回答：','【情境应用】课堂讨论出现以下问题，请综合课本知识作答：','【比较判断】不要只凭字面印象；请辨析后回答：'];
 const _answers5=new Map(unitMeta.map((_,u)=>[u+1,[...new Set(bank.filter(item=>item.u===u+1).map(item=>item.answer))]]));
@@ -20,3 +17,5 @@ const _kind5=(answer,question)=>/哪一天|哪一年|年份/.test(question)?'日
 const _stem5=(item,index)=>({日期:['【时间线辨析】请先排除其他历史节点，再作出判断：','【时间比较】请辨别相近时间后回答：'],数量:['【数据辨析】请区分数量、年份与次序后回答：','【资料核对】请比对课本数据后回答：'],地点:['【地理定位】请先辨别州属、地点与相关遗址，再作答：','【地点比较】请排除相近地名后回答：'],人物:['【人物辨析】请依据人物的职位、贡献或称号交叉核对：','【角色比较】请区分人物与其职责后回答：'],单元概念:['【概念推理】请区分定义、作用与实例后回答：','【证据判断】请以课本依据排除不完全正确的概念：']}[_kind5(item.answer,item.question)][index%2]);
 const _all5=[...bank];
 bank.splice(0,bank.length,...bank.map((item,index)=>{const kind=_kind5(item.answer,item.question);const related=[...new Set((kind==='单元概念'?_answers5.get(item.u):_all5.filter(entry=>_kind5(entry.answer,entry.question)===kind).map(entry=>entry.answer)).filter(answer=>answer!==item.answer))];const choices=[...related,...item.wrong,..._answers5.get(item.u)].filter(answer=>answer!==item.answer);const wrong=[];for(const answer of choices){if(!wrong.includes(answer))wrong.push(answer);if(wrong.length===3)break;}return {...item,question:_stem5(item,index)+item.question.replace(/^(根据课本，|请选出正确答案：|下列说法中，正确的是：)/,''),wrong};}));
+const _seen5=new Set();
+bank.splice(0,bank.length,...bank.filter(item=>{const key=`${item.u}|${item.question.replace(/^【[^】]+】[^：]*：/,'')}|${item.answer}`;if(_seen5.has(key))return false;_seen5.add(key);return true;}));
